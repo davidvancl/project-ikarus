@@ -1,17 +1,21 @@
 #pragma once
 
+#include "config.h"
 #include "arduino_secrets.h"
 
 #include <ESP8266WiFi.h>
 #include <WiFiClientSecure.h>
 #include <ESP8266HTTPClient.h>
+#include <functional>
+#include <ArduinoJson.h>
 
 class Network {
   public:
-    bool init(const char* ssid, const char* password, unsigned long timeout = 15000);
+    bool init();
     bool sendSlackMessage(const String& text);
+    void reportUnansweredMessages();
     bool isConnected();
 
   private:
-    String escapeJson(const String& text);
+    bool request(const String& url, const char* method, const String& payload, std::function<void(HTTPClient&)> onSuccess);
 };
