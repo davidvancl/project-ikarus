@@ -1,18 +1,16 @@
-#include <Arduino.h>
+#include "Network.h"
+#include "arduino_secrets.h"
 
-// put function declarations here:
-int myFunction(int, int);
+Network network;
 
 void setup() {
-  // put your setup code here, to run once:
-  int result = myFunction(2, 3);
+  Serial.begin(115200);
+
+  if (network.init(SECRET_SSID, SECRET_PASS)) {
+    network.sendSlackMessage("Test zpravy z bota (ESP8266, Network class)");
+  }
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-}
-
-// put function definitions here:
-int myFunction(int x, int y) {
-  return x + y;
+  
 }
