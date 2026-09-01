@@ -22,12 +22,21 @@ void showNumber(int number) {
   int tens = number / 10;
   int ones = number % 10;
 
+  // první displej (DIG0/DIG1) - opraveno
   if (tens == 0) {
     lc.setChar(0, 0, ' ', false);
   } else {
     lc.setDigit(0, 0, tens, false);
   }
   lc.setDigit(0, 1, ones, false);
+
+  // druhý displej (DIG4/DIG5) - beze změny
+  if (tens == 0) {
+    lc.setChar(0, 4, ' ', false);
+  } else {
+    lc.setDigit(0, 4, tens, false);
+  }
+  lc.setDigit(0, 5, ones, false);
 }
 
 void loop() {

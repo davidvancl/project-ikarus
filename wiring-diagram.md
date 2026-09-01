@@ -46,4 +46,17 @@ points pointing down):
 | 9 | Segment A | 14 (SEG A) |
 | 10 | DP (decimal point) | 22 (SEG DP) |
 
+| Second display pin | Function | MAX7219 pin | Note |
+|---|---|---|---|
+| 1 | COM1 (left digit) | 3 (DIG4) | new wire |
+| 2 | COM2 (right digit) | 10 (DIG5) | new wire |
+| 3 | Segment G | 17 (SEG G) | parallel to 1st display |
+| 4 | Segment F | 15 (SEG F) | parallel to 1st display |
+| 5 | Segment E | 21 (SEG E) | parallel to 1st display |
+| 6 | Segment D | 23 (SEG D) | parallel to 1st display |
+| 7 | Segment C | 20 (SEG C) | parallel to 1st display |
+| 8 | Segment B | 16 (SEG B) | parallel to 1st display |
+| 9 | Segment A | 14 (SEG A) | parallel to 1st display |
+| 10 | DP (decimal point) | 22 (SEG DP) | parallel to 1st display |
+
 ![MAX7219CNG to 220801K display wiring](images/max7219.jpg)
