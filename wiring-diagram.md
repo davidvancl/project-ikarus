@@ -77,32 +77,32 @@ points pointing down):
 
 | Display A pin | Function | MAX7219 #2 pin |
 |---|---|---|
-| 12 | DIG1 (1st digit) | 2 (DIG0) |
-| 9 | DIG2 (2nd digit) | 11 (DIG1) |
-| 8 | DIG3 (3rd digit) | 6 (DIG2) |
+| 1 | Segment C | 20 (SEG C) |
+| 2 | Segment G | 17 (SEG G) |
+| 3 | Segment E | 21 (SEG E) |
+| 4 | Segment B | 16 (SEG B) |
+| 5 | Segment D | 23 (SEG D) |
 | 6 | DIG4 (4th digit) | 7 (DIG3) |
+| 7 | Segment F | 15 (SEG F) |
+| 8 | DIG3 (3rd digit) | 6 (DIG2) |
+| 9 | DIG2 (2nd digit) | 11 (DIG1) |
+| 10 | DP (decimal point) | 22 (SEG DP) |
 | 11 | Segment A | 14 (SEG A) |
-| 7 | Segment B | 16 (SEG B) |
-| 4 | Segment C | 20 (SEG C) |
-| 2 | Segment D | 23 (SEG D) |
-| 1 | Segment E | 21 (SEG E) |
-| 10 | Segment F | 15 (SEG F) |
-| 5 | Segment G | 17 (SEG G) |
-| 3 | DP (decimal point) | 22 (SEG DP) |
+| 12 | DIG1 (1st digit) | 2 (DIG0) |
 
 ## 6. MAX7219CNG #2 → Display B (second SH5461AS / K288G, digits 5–8)
 
 | Display B pin | Function | MAX7219 #2 pin |
 |---|---|---|
-| 12 | DIG1 (5th digit) | 3 (DIG4) |
-| 9 | DIG2 (6th digit) | 10 (DIG5) |
-| 8 | DIG3 (7th digit) | 5 (DIG6) |
-| 6 | DIG4 (8th digit) | 8 (DIG7) |
-| 11 | Segment A | 14 (SEG A) — shared with display A |
-| 7 | Segment B | 16 (SEG B) — shared with display A |
-| 4 | Segment C | 20 (SEG C) — shared with display A |
-| 2 | Segment D | 23 (SEG D) — shared with display A |
 | 1 | Segment E | 21 (SEG E) — shared with display A |
-| 10 | Segment F | 15 (SEG F) — shared with display A |
-| 5 | Segment G | 17 (SEG G) — shared with display A |
+| 2 | Segment D | 23 (SEG D) — shared with display A |
 | 3 | DP (decimal point) | 22 (SEG DP) — shared with display A |
+| 4 | Segment C | 20 (SEG C) — shared with display A |
+| 5 | Segment G | 17 (SEG G) — shared with display A |
+| 6 | DIG4 (8th digit) | 8 (DIG7) |
+| 7 | Segment B | 16 (SEG B) — shared with display A |
+| 8 | DIG3 (7th digit) | 5 (DIG6) |
+| 9 | DIG2 (6th digit) | 10 (DIG5) |
+| 10 | Segment F | 15 (SEG F) — shared with display A |
+| 11 | Segment A | 14 (SEG A) — shared with display A |
+| 12 | DIG1 (5th digit) | 3 (DIG4) |
