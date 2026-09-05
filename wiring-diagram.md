@@ -7,11 +7,11 @@ variant 8021A) through a bare MAX7219CNG driver chip.
 ## Components
 
 - ESP8266 dev board (NodeMCU-style, pins labeled D0–D8)
-- MAX7219CNG (24-pin DIP)
-- 220801K / 8021A 2-digit 7-segment display, common cathode
-- 1x resistor, 10–22 kΩ (sets segment brightness via ISET)
-- 1x capacitor, 10 µF+ electrolytic (decoupling — a 4700 µF/16V works fine too)
-- Optional: 100 nF ceramic capacitor (extra high-frequency decoupling)
+- 2x MAX7219CNG (24-pin DIP)
+- 2x 220801K / 8021A 2-digit 7-segment display, common cathode
+- 2x SH5461AS / K288G 4-digit 7-segment display, common cathode
+- 2x resistor, 10 kΩ (one per MAX7219, sets segment brightness via ISET)
+- 2x capacitor, 22 µF/25V electrolytic (one per MAX7219, decoupling — a 4700 µF/16V also works fine)
 
 ## 1. ESP8266 → MAX7219CNG
 
@@ -22,7 +22,7 @@ variant 8021A) through a bare MAX7219CNG driver chip.
 | 12 | LOAD/CS | D4 | GPIO2 |
 | 4, 9 | GND | GND | — |
 | 19 | V+ | VIN (5V) | — |
-| 18 | ISET | via 10–22 kΩ resistor → V+ | — |
+| 18 | ISET | via 10 kΩ resistor → V+ | — |
 
 ![ESP8266 to MAX7219CNG wiring](images/220801k.jpg)
 
@@ -40,11 +40,11 @@ points pointing down):
 | 3 | Segment G | 17 (SEG G) |
 | 4 | Segment F | 15 (SEG F) |
 | 5 | Segment E | 21 (SEG E) |
-| 6 | Segment D | 23 (SEG D) |
-| 7 | Segment C | 20 (SEG C) |
+| 6 | DP (decimal point) | 22 (SEG DP) |
+| 7 | Segment A | 14 (SEG A) |
 | 8 | Segment B | 16 (SEG B) |
-| 9 | Segment A | 14 (SEG A) |
-| 10 | DP (decimal point) | 22 (SEG DP) |
+| 9 | Segment C | 20 (SEG C) |
+| 10 | Segment D | 23 (SEG D) |
 
 | Second display pin | Function | MAX7219 pin | Note |
 |---|---|---|---|
@@ -53,11 +53,11 @@ points pointing down):
 | 3 | Segment G | 17 (SEG G) | parallel to 1st display |
 | 4 | Segment F | 15 (SEG F) | parallel to 1st display |
 | 5 | Segment E | 21 (SEG E) | parallel to 1st display |
-| 6 | Segment D | 23 (SEG D) | parallel to 1st display |
-| 7 | Segment C | 20 (SEG C) | parallel to 1st display |
+| 6 | DP (decimal point) | 22 (SEG DP) | parallel to 1st display |
+| 7 | Segment A | 14 (SEG A) | parallel to 1st display |
 | 8 | Segment B | 16 (SEG B) | parallel to 1st display |
-| 9 | Segment A | 14 (SEG A) | parallel to 1st display |
-| 10 | DP (decimal point) | 22 (SEG DP) | parallel to 1st display |
+| 9 | Segment C | 20 (SEG C) | parallel to 1st display |
+| 10 | Segment D | 23 (SEG D) | parallel to 1st display |
 
 ![MAX7219CNG to 220801K display wiring](images/max7219.jpg)
 
