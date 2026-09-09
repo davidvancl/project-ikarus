@@ -13,12 +13,8 @@ displays (SH5461AS / K288G).
 - 2x 220801K / 8021A 2-digit 7-segment display, common cathode
 - 2x SH5461AS / K288G 4-digit 7-segment display, common cathode
 - 2x resistor, 10 kΩ (one per MAX7219, sets segment brightness via ISET)
-<<<<<<< HEAD
 - 2x capacitor, 22 µF/25V electrolytic (one per MAX7219, decoupling
   — a 4700 µF/16V also works fine)
-=======
-- 2x capacitor, 22 µF/25V electrolytic (one per MAX7219, decoupling — a 4700 µF/16V also works fine)
->>>>>>> c2ab938447d8630bd2bcc26a33f899e36ec65929
 
 ## 1. ESP8266 → MAX7219CNG
 
@@ -39,27 +35,11 @@ Pin numbering as seen from the **front** (digits facing you, decimal
 points pointing down): bottom row left→right 1–5, top row left→right
 10–6.
 
-<<<<<<< HEAD
 Both displays share the same confirmed pinout (second display
 mirrors the first, just on DIG4/DIG5 for the commons):
-=======
-| Display pin | Function | MAX7219 pin |
-|---|---|---|
-| 1 | COM1 (left digit, common cathode) | 2 (DIG0) |
-| 2 | COM2 (right digit, common cathode) | 11 (DIG1) |
-| 3 | Segment G | 17 (SEG G) |
-| 4 | Segment F | 15 (SEG F) |
-| 5 | Segment E | 21 (SEG E) |
-| 6 | DP (decimal point) | 22 (SEG DP) |
-| 7 | Segment A | 14 (SEG A) |
-| 8 | Segment B | 16 (SEG B) |
-| 9 | Segment C | 20 (SEG C) |
-| 10 | Segment D | 23 (SEG D) |
->>>>>>> c2ab938447d8630bd2bcc26a33f899e36ec65929
 
 | Display pin | Function | 1st display: MAX7219 pin | 2nd display: MAX7219 pin |
 |---|---|---|---|
-<<<<<<< HEAD
 | 1 | COM1 (left digit, common cathode) | 2 (DIG0) | 3 (DIG4) |
 | 2 | COM2 (right digit, common cathode) | 11 (DIG1) | 10 (DIG5) |
 | 3 | Segment G | 17 (SEG G) | 17 (SEG G) — shared |
@@ -70,18 +50,6 @@ mirrors the first, just on DIG4/DIG5 for the commons):
 | 8 | Segment B | 16 (SEG B) | 16 (SEG B) — shared |
 | 9 | Segment C | 20 (SEG C) | 20 (SEG C) — shared |
 | 10 | Segment D | 23 (SEG D) | 23 (SEG D) — shared |
-=======
-| 1 | COM1 (left digit) | 3 (DIG4) | new wire |
-| 2 | COM2 (right digit) | 10 (DIG5) | new wire |
-| 3 | Segment G | 17 (SEG G) | parallel to 1st display |
-| 4 | Segment F | 15 (SEG F) | parallel to 1st display |
-| 5 | Segment E | 21 (SEG E) | parallel to 1st display |
-| 6 | DP (decimal point) | 22 (SEG DP) | parallel to 1st display |
-| 7 | Segment A | 14 (SEG A) | parallel to 1st display |
-| 8 | Segment B | 16 (SEG B) | parallel to 1st display |
-| 9 | Segment C | 20 (SEG C) | parallel to 1st display |
-| 10 | Segment D | 23 (SEG D) | parallel to 1st display |
->>>>>>> c2ab938447d8630bd2bcc26a33f899e36ec65929
 
 ![MAX7219CNG to 220801K display wiring](images/max7219.jpg)
 
@@ -130,7 +98,6 @@ predicts).
 | 8 | DIG3 (7th digit) | 5 (DIG6) |
 | 6 | DIG4 (8th digit) | 8 (DIG7) |
 | 11 | Segment A | 14 (SEG A) — shared with display A |
-<<<<<<< HEAD
 | 7 | Segment B | 16 (SEG B) — shared with display A |
 | 4 | Segment C | 20 (SEG C) — shared with display A |
 | 2 | Segment D | 23 (SEG D) — shared with display A |
@@ -138,6 +105,3 @@ predicts).
 | 10 | Segment F | 15 (SEG F) — shared with display A |
 | 5 | Segment G | 17 (SEG G) — shared with display A |
 | 3 | DP (decimal point) | 22 (SEG DP) — shared with display A |
-=======
-| 12 | DIG1 (5th digit) | 3 (DIG4) |
->>>>>>> c2ab938447d8630bd2bcc26a33f899e36ec65929
