@@ -1,7 +1,6 @@
 #pragma once
 
 #include "config.h"
-#include "arduino_secrets.h"
 
 #include <ESP8266WiFi.h>
 #include <WiFiClientSecure.h>

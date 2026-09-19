@@ -1,9 +1,10 @@
 #include "Network.h"
 #include "NetworkUtils.h"
+#include "TokenStore.h"
 
 bool Network::init() {
   WiFi.mode(WIFI_STA);
-  WiFi.begin(SECRET_SSID, SECRET_PASS);
+  WiFi.begin();
 
   Serial.print("[Network]: Connecting to WiFi");
   unsigned long start = millis();
@@ -40,7 +41,7 @@ bool Network::request(const String& url, const char* method, const String& paylo
   bool success = false;
 
   if (https.begin(client, url)) {
-    https.addHeader("Authorization", String("Bearer ") + SLACK_TOKEN);
+    https.addHeader("Authorization", String("Bearer ") + TokenStore::slack());
 
     int httpCode;
     if (strcmp(method, "POST") == 0) {
@@ -119,7 +120,7 @@ void Network::reportUnansweredMessages() {
   });
 
   if (links.length() == 0) {
-    Serial.println("[Network]: Zadne nezodpovezene zpravy, nic neposilam.");
+    Serial.println("[Network]: No unanswered messages, nothing to send.");
     return;
   }
 

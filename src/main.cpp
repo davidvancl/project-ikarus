@@ -1,29 +1,47 @@
 #include "Network.h"
-#include "arduino_secrets.h"
+#include "TokenStore.h"
+
+#if __has_include("secrets.h")
+#include "secrets.h"
+#define HAS_SECRETS
+#define WIFI_CREDENTIALS SECRET_SSID, SECRET_PASS
+#else
+#define WIFI_CREDENTIALS nullptr, nullptr
+#endif
 
 #include <LedControl.h>
+#include <OtaUpdater.h>
 #include <Wire.h>
 
 #define PCF8574A_ADDR 0x38
 
 Network network;
-LedControl lc = LedControl(13, 14, 2, 2); // D7, D5, D4, počet čipů = 2
+LedControl lc = LedControl(13, 14, 2, 2);
 
 const int greenLedPin = D8;
 const int redLedPin = D6;
 
-int topNumber = 1;      // čip 0: oba 220801K displeje, 1-99
-int bottomNumber = 1;   // čip 1: oba SH5461AS displeje, 1-9999
+int topNumber = 1;
+int bottomNumber = 1;
 
 unsigned long lastDisplayUpdate = 0;
 unsigned long lastButtonCheck = 0;
 
-const unsigned long displayInterval = 500; // ms, rychlost počítání
-const unsigned long buttonInterval = 50;   // ms, rychlá odezva na tlačítka
+const unsigned long displayInterval = 500;
+const unsigned long buttonInterval = 50;
 
 void setup() {
   Serial.begin(115200);
   Serial.println("Start");
+  Serial.print("Firmware version: ");
+  Serial.println(FW_VERSION);
+
+  OtaUpdater::run(WIFI_CREDENTIALS);
+
+#ifdef HAS_SECRETS
+  TokenStore::save(SLACK_TOKEN, SECRET_GITLAB_TOKEN);
+#endif
+  TokenStore::load();
 
   lc.shutdown(0, false);
   lc.shutdown(1, false);
@@ -39,10 +57,7 @@ void setup() {
   analogWrite(greenLedPin, 512);
   analogWrite(redLedPin, 512);
 
-  Wire.begin(D2, D1); // SDA, SCL - PCF8574A
-
-  // network.init();
-  // network.reportUnansweredMessages();
+  Wire.begin(D2, D1);
 }
 
 void showTwoDigits(int chipAddr, int startPos, int number) {
@@ -67,7 +82,7 @@ void showFourDigits(int chipAddr, int startPos, int number) {
 
 void checkButtonsAndLeds() {
   Wire.beginTransmission(PCF8574A_ADDR);
-  Wire.write((uint8_t)0b11100111); // P3, P4 na LOW = obě malé LED svítí
+  Wire.write((uint8_t)0b11100111);
   Wire.endTransmission();
 
   Wire.requestFrom(PCF8574A_ADDR, 1);
@@ -81,14 +96,14 @@ void checkButtonsAndLeds() {
     bool button2       = !(state & 0x40);
     bool button3       = !(state & 0x80);
 
-    if (greenPressed) Serial.println("Zelene tlacitko STISKNUTO");
-    if (redPressed)   Serial.println("Cervene tlacitko STISKNUTO");
-    if (keyOn)         Serial.println("Klic ZAPNUT");
-    if (button1)        Serial.println("Tlacitko 1 STISKNUTO");
-    if (button2)        Serial.println("Tlacitko 2 STISKNUTO");
-    if (button3)        Serial.println("Tlacitko 3 STISKNUTO");
+    if (greenPressed) Serial.println("Green button PRESSED");
+    if (redPressed)   Serial.println("Red button PRESSED");
+    if (keyOn)         Serial.println("Key ON");
+    if (button1)        Serial.println("Button 1 PRESSED");
+    if (button2)        Serial.println("Button 2 PRESSED");
+    if (button3)        Serial.println("Button 3 PRESSED");
   } else {
-    Serial.println("PCF8574A neodpovida - zkontroluj zapojeni/adresu");
+    Serial.println("PCF8574A not responding - check wiring/address");
   }
 }
 
