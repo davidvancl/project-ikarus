@@ -1,0 +1,447 @@
+{
+  "name": "Ikarus",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "9bd53002-087d-40b0-bae2-e958e46eee1d",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -336,
+        -48
+      ],
+      "id": "16998e3e-49d7-4d9e-a8e8-5379aedc8453",
+      "name": "Webhook",
+      "webhookId": "9bd53002-087d-40b0-bae2-e958e46eee1d"
+    },
+    {
+      "parameters": {
+        "select": "user",
+        "user": {
+          "__rl": true,
+          "value": "ULTDZ4BV1",
+          "mode": "id"
+        },
+        "messageType": "block",
+        "blocksUi": "={{ {\n  \"channel\": \"ULTDZ4BV1\",\n  \"text\": \"Přehled nevyřešených požadavků\",\n  \"blocks\": $json.blocks\n} }}",
+        "text": "Přehled nevyřešených požadavků",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.4,
+      "position": [
+        832,
+        -176
+      ],
+      "id": "38bed6fb-447b-45c8-a180-1f37ae21c001",
+      "name": "Send a message",
+      "webhookId": "4e3047c9-2a6d-416c-acce-1e28a3c6566b",
+      "credentials": {
+        "slackApi": {
+          "id": "MTgKeWlBUYQU7XEl",
+          "name": "Ikarus"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "fec10435-a531-431d-a897-62c9fd32ecc0",
+              "leftValue": "={{ ($json.reactions || []).some(r => r.name === 'white_check_mark') }}",
+              "rightValue": "=",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        64,
+        -176
+      ],
+      "id": "4843bf8f-f0f2-4941-ab1e-d75102f08c51",
+      "name": "Unanswered"
+    },
+    {
+      "parameters": {
+        "resource": "channel",
+        "operation": "history",
+        "channelId": {
+          "__rl": true,
+          "value": "C0A8GHWST44",
+          "mode": "id"
+        },
+        "limit": 100,
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.4,
+      "position": [
+        -64,
+        -176
+      ],
+      "id": "871ac8b8-f078-4c32-9ad4-76de809d0a97",
+      "name": "History questions",
+      "webhookId": "30118864-9d35-4cef-8e95-00122b9f099e",
+      "credentials": {
+        "slackApi": {
+          "id": "MTgKeWlBUYQU7XEl",
+          "name": "Ikarus"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "channel",
+        "operation": "history",
+        "channelId": {
+          "__rl": true,
+          "value": "C0B344CNJ7P",
+          "mode": "id"
+        },
+        "limit": 100,
+        "filters": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.4,
+      "position": [
+        -64,
+        64
+      ],
+      "id": "d555ba8a-2253-46d0-8ecc-77e877277051",
+      "name": "History CR",
+      "webhookId": "bcf360a3-bee0-4ae4-9bb5-beb9eeaceaa6",
+      "credentials": {
+        "slackApi": {
+          "id": "MTgKeWlBUYQU7XEl",
+          "name": "Ikarus"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -368,
+        464
+      ],
+      "id": "33928df6-10ca-456f-993c-b3dbcda15078",
+      "name": "START"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "16991b27-95d3-457d-ba68-dc54a7e71691",
+              "leftValue": "={{ $json.text?.includes('potřebuje code review') && !($json.reactions || []).some(r => r.name === 'white_check_mark') }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        64,
+        64
+      ],
+      "id": "4a83e441-bb58-4157-9781-dd337d2edd49",
+      "name": "Unreviewed"
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{\n  json: {\n    unanswered_count: $('Unanswered').all().length,\n    unreviewed_code_review_count: $('Unreviewed').all().length\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        464,
+        64
+      ],
+      "id": "abe1aa66-53a6-48fc-9edd-1201b3902831",
+      "name": "MERGE COUNTS"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        592,
+        64
+      ],
+      "id": "cc69f8a5-d4d9-401e-a4c0-eefafea62495",
+      "name": "RESPOND"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        272,
+        -48
+      ],
+      "id": "dd4cb51a-fc16-4ae3-845a-b1b6a9d93652",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "jsCode": "const unansweredItems = $('Unanswered').all();\nconst unreviewedItems = $('Unreviewed').all();\n\nconst teamId = 'T0B6XLLPR';\nconst defaultQuestionChannel = 'C0A8GHWST44';\nconst defaultCodeReviewChannel = 'C0B344CNJ7P';\n\nlet questionLines = [];\nif (!unansweredItems || unansweredItems.length === 0) {\n  questionLines.push(\"✅ *All questions answered!*\");\n} else {\n  questionLines = unansweredItems.map((item) => {\n    const channel = item.json.channel || item.json.channel_id || defaultQuestionChannel;\n    const ts = item.json.ts;\n    const user = item.json.user ? `<@${item.json.user}>` : 'User';\n    let link = item.json.permalink;\n\n    if (ts) {\n      link = `https://app.slack.com/client/${teamId}/${channel}/${ts}`;\n    }\n\n    return `• ${user} ➔ <${link}|View message>`;\n  });\n}\n\nlet codeReviewLines = [];\nif (!unreviewedItems || unreviewedItems.length === 0) {\n  codeReviewLines.push(\"✅ *All code reviews completed!*\");\n} else {\n  codeReviewLines = unreviewedItems.map((item) => {\n    const channel = item.json.channel || item.json.channel_id || defaultCodeReviewChannel;\n    const ts = item.json.ts;\n    const rawText = item.json.text || '';\n\n    let mrLink = '';\n    if (item.json.attachments && item.json.attachments[0] && item.json.attachments[0].original_url) {\n      mrLink = item.json.attachments[0].original_url;\n    } else {\n      const mrMatch = rawText.match(/<(https:\\/\\/gitlab[^|>]+)/);\n      mrLink = mrMatch ? mrMatch[1] : '';\n    }\n\n    const userMatch = rawText.match(/<@([A-Z0-9]+)>/);\n    const user = userMatch ? `<@${userMatch[1]}>` : 'Developer';\n\n    let slackLink = item.json.permalink;\n    if (ts) {\n      slackLink = `https://app.slack.com/client/${teamId}/${channel}/${ts}`;\n    }\n\n    const gitlabPart = mrLink ? `<${mrLink}|GitLab MR>` : 'MR Details';\n    const slackPart = slackLink ? `<${slackLink}|Slack link>` : '';\n\n    return `• ${user} ➔ ${gitlabPart} (${slackPart})`;\n  });\n}\n\nconst blocks = [\n  {\n    \"type\": \"header\",\n    \"text\": { \"type\": \"plain_text\", \"text\": \"🚀 DEV Standup: Task Overview\", \"emoji\": true }\n  },\n  {\n    \"type\": \"section\",\n    \"text\": { \"type\": \"mrkdwn\", \"text\": \"*Pending items without :white_check_mark:*\" }\n  },\n  { \"type\": \"divider\" },\n  {\n    \"type\": \"section\",\n    \"text\": { \"type\": \"mrkdwn\", \"text\": \"❓ *Unanswered Questions:*\" }\n  }\n];\n\nconst chunkSize = 15;\nfor (let i = 0; i < questionLines.length; i += chunkSize) {\n  const chunkText = questionLines.slice(i, i + chunkSize).join('\\n');\n  blocks.push({\n    \"type\": \"section\",\n    \"text\": { \"type\": \"mrkdwn\", \"text\": chunkText }\n  });\n}\n\nblocks.push(\n  { \"type\": \"divider\" },\n  {\n    \"type\": \"section\",\n    \"text\": { \"type\": \"mrkdwn\", \"text\": \"👀 *Pending Code Reviews:*\" }\n  }\n);\n\nfor (let i = 0; i < codeReviewLines.length; i += chunkSize) {\n  const chunkText = codeReviewLines.slice(i, i + chunkSize).join('\\n');\n  blocks.push({\n    \"type\": \"section\",\n    \"text\": { \"type\": \"mrkdwn\", \"text\": chunkText }\n  });\n}\n\nreturn [{\n  json: {\n    blocks: blocks\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        704,
+        -176
+      ],
+      "id": "022b1469-07ba-4ae3-b08d-ab4c72f4efc5",
+      "name": "PREPARE MESSAGE"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "14b90833-dc10-45f6-be54-4108bb92d9ef",
+              "leftValue": "={{ ['true', '1', 'yes'].includes(String($('Webhook').first().json.query?.send_report || '').toLowerCase()) }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        576,
+        -176
+      ],
+      "id": "36a2b2ad-04aa-47d3-9a8a-921573b670e1",
+      "name": "CHECK PARAM"
+    },
+    {
+      "parameters": {
+        "resource": "channel",
+        "operation": "history",
+        "channelId": {
+          "__rl": true,
+          "value": "C0B344CNJ7P",
+          "mode": "id"
+        },
+        "limit": 100,
+        "filters": {
+          "oldest": "={{ Math.floor(new Date().setHours(0,0,0,0) / 1000) }}"
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.4,
+      "position": [
+        -48,
+        464
+      ],
+      "id": "cfd2c77c-2a60-4ac6-90d7-7caa55c82c58",
+      "name": "Get the history of a channel",
+      "webhookId": "60d0c91c-7a7f-4f52-aaef-7da903b1cea3",
+      "credentials": {
+        "slackApi": {
+          "id": "MTgKeWlBUYQU7XEl",
+          "name": "Ikarus"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "History questions",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "History CR",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        []
+      ]
+    },
+    "Unanswered": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "History questions": {
+      "main": [
+        [
+          {
+            "node": "Unanswered",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "History CR": {
+      "main": [
+        [
+          {
+            "node": "Unreviewed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "START": {
+      "main": [
+        [
+          {
+            "node": "Get the history of a channel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Unreviewed": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "MERGE COUNTS": {
+      "main": [
+        [
+          {
+            "node": "RESPOND",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RESPOND": {
+      "main": [
+        []
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "MERGE COUNTS",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "CHECK PARAM",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PREPARE MESSAGE": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CHECK PARAM": {
+      "main": [
+        [
+          {
+            "node": "PREPARE MESSAGE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "7ca575e7-6375-40a1-97b9-ddfc2e361617",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2a6ee986fca2ba38a3319dd8d4fc8dcc0e23808dbc83666a0971719628e092dd"
+  },
+  "id": "mxHW17rH2eul9Ksj",
+  "tags": []
+}

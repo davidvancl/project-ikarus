@@ -15,14 +15,20 @@ const int redLedPin = D6;
 int topNumber = 1;      // čip 0: oba 220801K displeje, 1-99
 int bottomNumber = 1;   // čip 1: oba SH5461AS displeje, 1-9999
 
+unsigned long lastDisplayUpdate = 0;
+unsigned long lastButtonCheck = 0;
+
+const unsigned long displayInterval = 500; // ms, rychlost počítání
+const unsigned long buttonInterval = 50;   // ms, rychlá odezva na tlačítka
+
 void setup() {
   Serial.begin(115200);
   Serial.println("Start");
 
   lc.shutdown(0, false);
   lc.shutdown(1, false);
-  lc.setScanLimit(0, 7); // plný rozsah 8 pozic na čipu 0
-  lc.setScanLimit(1, 7); // plný rozsah 8 pozic na čipu 1
+  lc.setScanLimit(0, 7);
+  lc.setScanLimit(1, 7);
   lc.setIntensity(0, 8);
   lc.setIntensity(1, 8);
   lc.clearDisplay(0);
@@ -43,7 +49,7 @@ void showTwoDigits(int chipAddr, int startPos, int number) {
   int tens = number / 10;
   int ones = number % 10;
 
-  lc.setDigit(chipAddr, startPos, tens, false); // "01" místo " 1"
+  lc.setDigit(chipAddr, startPos, tens, false);
   lc.setDigit(chipAddr, startPos + 1, ones, false);
 }
 
@@ -53,46 +59,60 @@ void showFourDigits(int chipAddr, int startPos, int number) {
   int tens = (number / 10) % 10;
   int ones = number % 10;
 
-  lc.setDigit(chipAddr, startPos, thousands, false); // "0001" místo "   1"
+  lc.setDigit(chipAddr, startPos, thousands, false);
   lc.setDigit(chipAddr, startPos + 1, hundreds, false);
   lc.setDigit(chipAddr, startPos + 2, tens, false);
   lc.setDigit(chipAddr, startPos + 3, ones, false);
 }
 
-void checkButtons() {
+void checkButtonsAndLeds() {
   Wire.beginTransmission(PCF8574A_ADDR);
-  Wire.write((uint8_t)0xFF);
+  Wire.write((uint8_t)0b11100111); // P3, P4 na LOW = obě malé LED svítí
   Wire.endTransmission();
 
   Wire.requestFrom(PCF8574A_ADDR, 1);
   if (Wire.available()) {
     uint8_t state = Wire.read();
-    bool greenPressed = !(state & 0x01); // P0
-    bool redPressed = !(state & 0x02);   // P1
-    bool keyOn = !(state & 0x04);        // P2
+
+    bool greenPressed = !(state & 0x01);
+    bool redPressed   = !(state & 0x02);
+    bool keyOn        = !(state & 0x04);
+    bool button1       = !(state & 0x20);
+    bool button2       = !(state & 0x40);
+    bool button3       = !(state & 0x80);
 
     if (greenPressed) Serial.println("Zelene tlacitko STISKNUTO");
-    if (redPressed) Serial.println("Cervene tlacitko STISKNUTO");
-    if (keyOn) Serial.println("Klic ZAPNUT");
+    if (redPressed)   Serial.println("Cervene tlacitko STISKNUTO");
+    if (keyOn)         Serial.println("Klic ZAPNUT");
+    if (button1)        Serial.println("Tlacitko 1 STISKNUTO");
+    if (button2)        Serial.println("Tlacitko 2 STISKNUTO");
+    if (button3)        Serial.println("Tlacitko 3 STISKNUTO");
   } else {
     Serial.println("PCF8574A neodpovida - zkontroluj zapojeni/adresu");
   }
 }
 
 void loop() {
-  showTwoDigits(0, 0, topNumber);  // displej 1 (220801K)
-  showTwoDigits(0, 4, topNumber);  // displej 2 (220801K)
+  unsigned long now = millis();
 
-  showFourDigits(1, 0, bottomNumber); // displej A (SH5461AS)
-  showFourDigits(1, 4, bottomNumber); // displej B (SH5461AS)
+  if (now - lastButtonCheck >= buttonInterval) {
+    lastButtonCheck = now;
+    checkButtonsAndLeds();
+  }
 
-  checkButtons();
+  if (now - lastDisplayUpdate >= displayInterval) {
+    lastDisplayUpdate = now;
 
-  delay(500);
+    showTwoDigits(0, 0, topNumber);
+    showTwoDigits(0, 4, topNumber);
 
-  topNumber++;
-  if (topNumber > 99) topNumber = 1;
+    showFourDigits(1, 0, bottomNumber);
+    showFourDigits(1, 4, bottomNumber);
 
-  bottomNumber++;
-  if (bottomNumber > 9999) bottomNumber = 1;
+    topNumber++;
+    if (topNumber > 99) topNumber = 1;
+
+    bottomNumber++;
+    if (bottomNumber > 9999) bottomNumber = 1;
+  }
 }
