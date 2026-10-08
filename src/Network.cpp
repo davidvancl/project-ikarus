@@ -1,6 +1,11 @@
 #include "Network.h"
+#include <OtaUpdater.h>
 #include "NetworkUtils.h"
-#include "TokenStore.h"
+
+static const String& slackToken() {
+  static String token = OtaUpdater::loadSecret("slack");
+  return token;
+}
 
 bool Network::init() {
   WiFi.mode(WIFI_STA);
@@ -41,7 +46,7 @@ bool Network::request(const String& url, const char* method, const String& paylo
   bool success = false;
 
   if (https.begin(client, url)) {
-    https.addHeader("Authorization", String("Bearer ") + TokenStore::slack());
+    https.addHeader("Authorization", String("Bearer ") + slackToken());
 
     int httpCode;
     if (strcmp(method, "POST") == 0) {
