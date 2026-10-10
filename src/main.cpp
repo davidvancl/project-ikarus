@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <DeviceControl.h>
 #include <EEPROM.h>
 #include <OtaUpdater.h>
 #include "Display.h"
@@ -23,6 +24,31 @@ static void migrateLegacyTokens() {
   Serial.println("Legacy tokens migrated.");
 }
 
+static DeviceControl::Setter number(int min, int max, std::function<void(int)> apply) {
+  return [min, max, apply](JsonVariantConst value) {
+    if (!value.is<int>()) return false;
+    int n = value.as<int>();
+    if (n < min || n > max) return false;
+    apply(n);
+    return true;
+  };
+}
+
+static void setupControl() {
+  DeviceControl::begin("Ikarus", "ikarus");
+
+  DeviceControl::set("left2", number(0, 99, [](int v) { Display::showTwoDigits(0, 0, v); }));
+  DeviceControl::set("right2", number(0, 99, [](int v) { Display::showTwoDigits(0, 4, v); }));
+  DeviceControl::set("left4", number(0, 9999, [](int v) { Display::showFourDigits(1, 0, v); }));
+  DeviceControl::set("right4", number(0, 9999, [](int v) { Display::showFourDigits(1, 4, v); }));
+  DeviceControl::set("intensity", number(0, 15, Display::setIntensity));
+  DeviceControl::set("green", number(0, 100, Panel::setGreen));
+  DeviceControl::set("red", number(0, 100, Panel::setRed));
+  DeviceControl::get<bool>("key", Panel::keyOn);
+
+  DeviceControl::pairWithPin(Display::showPin, Display::clear);
+}
+
 void setup() {
   Serial.begin(115200);
   Serial.println("Start");
@@ -42,8 +68,10 @@ void setup() {
 
   Panel::begin();
   Display::clear();
+  setupControl();
 }
 
 void loop() {
   Panel::poll();
+  DeviceControl::loop();
 }

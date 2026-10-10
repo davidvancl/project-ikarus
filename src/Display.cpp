@@ -32,6 +32,19 @@ void clear() {
   }
 }
 
+void setIntensity(int level) {
+  for (int chip = 0; chip < CHIP_COUNT; chip++) {
+    lc.setIntensity(chip, level);
+  }
+}
+
+void showPin(const char* pin) {
+  clear();
+  for (int i = 0; i < 4 && pin[i]; i++) {
+    lc.setChar(1, i, pin[i], false);
+  }
+}
+
 void showTwoDigits(int chipAddr, int startPos, int number) {
   lc.setDigit(chipAddr, startPos, number / 10, false);
   lc.setDigit(chipAddr, startPos + 1, number % 10, false);
