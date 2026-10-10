@@ -34,16 +34,34 @@ static DeviceControl::Setter number(int min, int max, std::function<void(int)> a
   };
 }
 
+// A display accepts a number in 0..max, or null to blank it.
+static DeviceControl::Setter display(int max, std::function<void(int)> show, std::function<void()> blank) {
+  return [max, show, blank](JsonVariantConst value) {
+    if (value.isNull()) {
+      blank();
+      return true;
+    }
+    if (!value.is<int>()) return false;
+    int n = value.as<int>();
+    if (n < 0 || n > max) return false;
+    show(n);
+    return true;
+  };
+}
+
 static void setupControl() {
   DeviceControl::begin("Ikarus", "ikarus");
 
-  DeviceControl::set("left2", number(0, 99, [](int v) { Display::showTwoDigits(0, 0, v); }));
-  DeviceControl::set("right2", number(0, 99, [](int v) { Display::showTwoDigits(0, 4, v); }));
-  DeviceControl::set("left4", number(0, 9999, [](int v) { Display::showFourDigits(1, 0, v); }));
-  DeviceControl::set("right4", number(0, 9999, [](int v) { Display::showFourDigits(1, 4, v); }));
+  DeviceControl::set("left2", display(99, [](int v) { Display::showTwoDigits(0, 0, v); }, [] { Display::blank(0, 0, 2); }));
+  DeviceControl::set("right2", display(99, [](int v) { Display::showTwoDigits(0, 4, v); }, [] { Display::blank(0, 4, 2); }));
+  DeviceControl::set("left4", display(9999, [](int v) { Display::showFourDigits(1, 0, v); }, [] { Display::blank(1, 0, 4); }));
+  DeviceControl::set("right4", display(9999, [](int v) { Display::showFourDigits(1, 4, v); }, [] { Display::blank(1, 4, 4); }));
   DeviceControl::set("intensity", number(0, 15, Display::setIntensity));
   DeviceControl::set("green", number(0, 100, Panel::setGreen));
   DeviceControl::set("red", number(0, 100, Panel::setRed));
+  DeviceControl::get<int>("intensity", Display::intensity);
+  DeviceControl::get<int>("green", Panel::green);
+  DeviceControl::get<int>("red", Panel::red);
   DeviceControl::get<bool>("key", Panel::keyOn);
 
   DeviceControl::pairWithPin(Display::showPin, Display::clear);

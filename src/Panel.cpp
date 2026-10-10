@@ -28,6 +28,8 @@ static const Button BUTTONS[] = {
 
 static unsigned long lastButtonCheck = 0;
 static uint8_t lastState = 0xFF;
+static int greenPercent = 0;
+static int redPercent = 0;
 
 static bool readState(uint8_t& state) {
   Wire.beginTransmission(PCF8574A_ADDR);
@@ -82,11 +84,21 @@ void poll() {
 }
 
 void setGreen(int percent) {
-  analogWrite(GREEN_LED_PIN, constrain(percent, 0, 100));
+  greenPercent = constrain(percent, 0, 100);
+  analogWrite(GREEN_LED_PIN, greenPercent);
 }
 
 void setRed(int percent) {
-  analogWrite(RED_LED_PIN, constrain(percent, 0, 100));
+  redPercent = constrain(percent, 0, 100);
+  analogWrite(RED_LED_PIN, redPercent);
+}
+
+int green() {
+  return greenPercent;
+}
+
+int red() {
+  return redPercent;
 }
 
 bool keyOn() {

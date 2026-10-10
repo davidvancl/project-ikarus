@@ -8,12 +8,13 @@ static const int CHIP_COUNT = 2;
 static const int DIGIT_COUNT = 8;
 
 static LedControl lc = LedControl(13, 14, 2, CHIP_COUNT);
+static int currentIntensity = 8;
 
 void begin() {
   for (int chip = 0; chip < CHIP_COUNT; chip++) {
     lc.shutdown(chip, false);
     lc.setScanLimit(chip, DIGIT_COUNT - 1);
-    lc.setIntensity(chip, 8);
+    lc.setIntensity(chip, currentIntensity);
     lc.clearDisplay(chip);
   }
 }
@@ -33,15 +34,26 @@ void clear() {
 }
 
 void setIntensity(int level) {
+  currentIntensity = level;
   for (int chip = 0; chip < CHIP_COUNT; chip++) {
     lc.setIntensity(chip, level);
   }
+}
+
+int intensity() {
+  return currentIntensity;
 }
 
 void showPin(const char* pin) {
   clear();
   for (int i = 0; i < 4 && pin[i]; i++) {
     lc.setChar(1, i, pin[i], false);
+  }
+}
+
+void blank(int chipAddr, int startPos, int count) {
+  for (int i = 0; i < count; i++) {
+    lc.setChar(chipAddr, startPos + i, ' ', false);
   }
 }
 
